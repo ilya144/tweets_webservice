@@ -6,8 +6,9 @@ class TweetParser:
     def __init__(self, accs):
         self.accs = accs
 
-    def get_card_tweets(self) -> list: # получаю твиты только с фото/видео контентом
-        all_tweets_urls = []
+
+    def parse_tweets(self) -> list: # получаю список json'a твитов с фото/видео
+        all_tweets = []
         for acc in self.accs:
             r = requests.get("https://twitter.com/%s" % acc)
             #print(r.status_code)
@@ -16,11 +17,17 @@ class TweetParser:
             #print(len(list_tweets))
             for tweet in list_tweets:
                 if 'data-has-cards' in list(tweet.children)[1].attrs:
-                    all_tweets_urls.append(list(tweet.children)[1].attrs['data-permalink-path'])
-        return all_tweets_urls
+
+                    tweet_username = list(tweet.children)[1].attrs['data-screen-name'] # load username
+                    tweet_url = list(tweet.children)[1].attrs['data-permalink-path'] # load url
+                    tweet_dict = {'from': tweet_username, 'url': tweet_url}
+
+                    all_tweets.append(tweet_dict)
+
+        return all_tweets
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # parse sandbox
     with open("../followed.txt") as f:
         string = f.read()
         accounts = string.split("\n")
@@ -33,9 +40,3 @@ if __name__ == "__main__":
     for tweet in list_tweets:
         if 'data-has-cards' in list(tweet.children)[1].attrs:
             print(list(tweet.children)[1].attrs)
-
-
-# 'data-tweet-nonce': '1103657493786435584-8b95820a-f3fd-4fd6-87cf-4bd052cf97f3' where 1103657493786435584 is
-# part of url https://twitter.com/golubev_vu/status/1103657493786435584  _easy
-# more ease that thing 'data-permalink-path'
-# e.g. https://twitter.com + list(tweet.children)[1].attrs['data-permalink-path'] == useful url
