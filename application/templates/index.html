@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>TweetParser</title>
+	<!--<link rel="stylesheet" href="style.css">-->
+	<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+</head>
+<body>
+	<header>latest tweets</header>
+	<nav>
+		<div class="from">show from: </div>
+		<div class="from-menu"></div>
+		<div class="count">show max: </div>
+		<div class="count-menu"></div>
+	</nav>
+	<section class="all-tweets">
+
+		{% for tweet in tweets %}
+		<div class="tweet-wrap" style="max-width: 50%!important;">
+			<blockquote class="twitter-tweet" data-lang="en">
+				<a href="https://twitter.com{{tweet}}"></a>
+			</blockquote>
+		</div>
+
+
+		{% endfor %}
+
+	</section>
+	<style>
+		header{
+			text-align: center;
+			font-family: 'Nunito', sans-serif;
+			font-size: 120%;
+			font-weight:bold;
+			margin-bottom: 30px;
+		}
+		nav{
+			display: flex;
+
+		}
+		.all-tweets{
+			display: flex;
+		 	flex-wrap: wrap;
+		 	justify-content: space-around;
+		}
+	</style>
+	<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</body>
+</html>
