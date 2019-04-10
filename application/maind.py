@@ -1,4 +1,4 @@
-import idbclient
+from idbclient import Database
 from iparser import TweetParser
 from flask import Flask, render_template
 from threading import Thread
@@ -15,7 +15,8 @@ class ParserThread(Thread):
     def run(self):
 
         while True:
-            self.tweets = self.parser_tweet.get_card_tweets()
+            self.tweets = self.parser_tweet.parse_tweets()
+            db.add_tweets(self.tweets)
             PARSE_DELAY = 300 # задержка между парсиногом твитов
             time.sleep(PARSE_DELAY)
 
@@ -24,14 +25,14 @@ class ParserThread(Thread):
 
 @app.route("/")
 def respone():
-    #return "Hello World!"
-    return render_template('index.html', tweets = parser_thread.tweets)
+    return render_template('index.html', tweets = db.get_last_url(10)) # load url and response
 
 
 if __name__ == "__main__":
     with open("../followed.txt") as f:
         string = f.read()
         accounts = string.split("\n")
+    db = Database()
     parser_tweet = TweetParser(accounts)
     parser_thread = ParserThread(parser_tweet)
     parser_thread.start()
